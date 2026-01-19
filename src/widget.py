@@ -29,5 +29,17 @@ def mask_account_card(account_card: str) -> str:
 
     return result
 
+def get_date(date: str) -> str:
+    """Функция, которая выводит дату из полученной строки"""
+    lst_date = list(str(date))
+    day = lst_date[8:10]
+    month = lst_date[5:7]
+    year = lst_date[:4]
+    result_date = day + ["."] + month + ["."] + year
+
+    result = ' '.join(str(item) for sublist in result_date for item in sublist)
+
+    return result
+
 
 
