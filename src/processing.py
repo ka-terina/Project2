@@ -1,4 +1,4 @@
-def filter_by_state(new_lst: list, state="EXECUTED": str) -> list:
+def filter_by_state(new_lst: list, state: str="EXECUTED") -> list:
     """Функция возвращает новый список словарей, содержащий только те
     словари, у которых ключ state соответствует указанному значению"""
     result = []
@@ -9,11 +9,8 @@ def filter_by_state(new_lst: list, state="EXECUTED": str) -> list:
     return result
 
 
-def sort_by_date(new_lst: list, reverse=True: bool) -> list:
+def sort_by_date(new_lst: list, reverse: bool=True) -> list:
     """Функция возвращает новый список сортированный по дате"""
-    if reverse == True:
-        result = sorted(new_lst, key=lambda x: x["date"], reverse=True)
-    else:
-        result = sorted(new_lst, key=lambda x: x["date"], reverse=False)
+    result = sorted(new_lst, key=lambda x: x["date"], reverse=reverse)
 
     return result
