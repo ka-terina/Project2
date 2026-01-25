@@ -5,7 +5,7 @@ def mask_account_card(account_card: str) -> str:
     mask_number_card = []  # список для маскировки номера карты
     if lst_account_card[0] == "С":
         mask_number.append(lst_account_card[:5])
-        mask_number.append("**")
+        mask_number.append(["**"])
         mask_number.append(lst_account_card[-4:])
         result = " ".join(str(item) for sublist in mask_number for item in sublist)
     else:
@@ -18,7 +18,7 @@ def mask_account_card(account_card: str) -> str:
         index_2 = -12
         for i in range(3):
             mask_number_card.append(lst_account_card[index_1:index_2])
-            mask_number_card.append(" ")
+            mask_number_card.append([" "])
             index_1 += 4
             index_2 += 4
         mask_number_card.append(lst_account_card[-4:])
