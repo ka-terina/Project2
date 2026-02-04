@@ -1,21 +1,39 @@
-def get_mask_card_number(number: int) -> str:
+def get_mask_card_number(number: str) -> str:
     """Функция, которая маскирует номер банковкой карты"""
-    lst_number = list(str(number))
-    mask_number = []
-    a = 0
-    b = 4
-    for i in range(4):
-        mask_number.append(lst_number[a:b])
-        mask_number.append([" "])
-        a += 4
-        b += 4
-    mask_number[2][2:] = ["**"]
-    mask_number[4] = ["****"]
+    if number == "":
+        raise ValueError("Номер карты не может быть пустым")
+    elif number == "  ":
+        raise ValueError("Номер карты не может быть пустым")
 
-    for i in range(len(mask_number)):
-        mask_number[i] = "".join(mask_number[i])
+    cleaned = "".join(filter(str.isdigit, number))
 
-    return "".join(mask_number)
+    if len(cleaned) <= 4:
+        return cleaned
+
+    first_part = cleaned[:4]
+
+    if len(cleaned) > 4:
+        second_part = cleaned[4:6] + "**"
+    else:
+        second_part = ""
+
+    middle = "*" * (len(cleaned) - 12)
+
+    middle_result = " ".join(middle[i: i + 4] for i in range(0, len(middle), 4))
+
+    last_part = cleaned[-4:]
+
+    parts = [first_part]
+    parts.append(str(second_part))
+    parts.append(str(middle_result))
+    parts.append(str(last_part))
+
+    result = " ".join(parts)
+
+    return result
+
+
+print(get_mask_card_number("1234567890123"))
 
 
 def get_mask_account(number: int) -> str:
