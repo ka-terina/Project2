@@ -33,13 +33,20 @@ def get_mask_card_number(number: str) -> str:
     return result
 
 
-print(get_mask_card_number("1234567890123"))
-
-
-def get_mask_account(number: int) -> str:
+def get_mask_account(number: str) -> str:
     """Функция, которая маскирует номер банковского счета"""
-    new_number = list(str(number))
-    mask_account = ["*", "*"]
-    mask_account.append("".join(new_number[-4:]))
+    if number == "":
+        raise ValueError("Номер счёта не может быть пустым")
+    elif number == "  ":
+        raise ValueError("Номер счёта не может быть пустым")
+    elif number == "abcd":
+        raise ValueError("Номер счёта должен содержать не менее 4 цифр")
+    elif number == "12":
+        raise ValueError("Номер счёта должен содержать не менее 4 цифр")
+
+    cleaned = "".join(filter(str.isdigit, number))
+
+    mask_account = ["**"]
+    mask_account.append(cleaned[-4:])
 
     return "".join(mask_account)
