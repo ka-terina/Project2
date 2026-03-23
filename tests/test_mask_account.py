@@ -4,7 +4,7 @@ from src.masks import get_mask_account
 
 
 @pytest.fixture
-def valid_account_numbers():
+def valid_account_numbers() -> list:
     """Валидные номера счетов в разных форматах."""
     return [
         "123456789012",  # 12 цифр
@@ -17,7 +17,7 @@ def valid_account_numbers():
 
 
 @pytest.fixture
-def invalid_account_numbers():
+def invalid_account_numbers() -> list:
     """Некорректные номера счетов."""
     return [
         "",  # пустая строка
@@ -38,25 +38,25 @@ def invalid_account_numbers():
         ("0000111122223333", "**3333"),
     ],
 )
-def test_valid_masking(input_number, expected, valid_account_numbers):
+def test_valid_masking(input_number: str, expected: str, valid_account_numbers: list) -> None:
     """Проверка корректного маскирования валидных номеров."""
     result = get_mask_account(input_number)
     assert result == expected
 
 
-def test_empty_string_raises_error(invalid_account_numbers):
+def test_empty_string_raises_error(invalid_account_numbers: list) -> None:
     """Пустая строка или пробелы → ошибка."""
     with pytest.raises(ValueError, match="Номер счёта не может быть пустым"):
         get_mask_account("")
 
 
-def test_non_digit_string_raises_error(invalid_account_numbers):
+def test_non_digit_string_raises_error(invalid_account_numbers: list) -> None:
     """Строка без цифр → ошибка."""
     with pytest.raises(ValueError, match="Номер счёта должен содержать не менее 4 цифр"):
         get_mask_account("abcd")
 
 
-def test_too_short_number_raises_error(invalid_account_numbers):
+def test_too_short_number_raises_error(invalid_account_numbers: list) -> None:
     """Номера короче 4 цифр → ошибка."""
     with pytest.raises(ValueError, match="Номер счёта должен содержать не менее 4 цифр"):
         get_mask_account("12")

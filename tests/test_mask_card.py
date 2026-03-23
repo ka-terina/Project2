@@ -4,7 +4,7 @@ from src.masks import get_mask_card_number
 
 
 @pytest.fixture
-def valid_card_number():
+def valid_card_number() -> list:
     """Возвращает список валидных номеров карт в разных форматах"""
     return [
         "1234567890123",  # 13 цифр
@@ -16,7 +16,7 @@ def valid_card_number():
 
 
 @pytest.fixture
-def invalid_card_number():
+def invalid_card_number() -> list:
     """Возвращает список некорректных номеров карт"""
     return [
         "",
@@ -36,13 +36,13 @@ def invalid_card_number():
         (" 1234 5678 9012 3456 ", "1234 56** **** 3456"),
     ],
 )
-def test_valid_masking(input_number, expected, valid_card_number):
+def test_valid_masking(input_number: str, expected: str, valid_card_number: list) -> None:
     """Проверка корректного маскирования для валидных номеров"""
     result = get_mask_card_number(input_number)
     assert result == expected
 
 
-def test_empty_string_raises_error(invalid_card_number):
+def test_empty_string_raises_error(invalid_card_number: list) -> None:
     """Пустая строка или пробелы должна вызывать ошибку"""
     with pytest.raises(ValueError, match="Номер карты не может быть пустым"):
         get_mask_card_number("")
@@ -50,13 +50,13 @@ def test_empty_string_raises_error(invalid_card_number):
         get_mask_card_number("  ")
 
 
-def test_only_digits_no_formatting():
+def test_only_digits_no_formatting() -> None:
     """Проверка, что функция работает с чистой строкой цифр."""
     result = get_mask_card_number("1234567812345678")
     assert result == "1234 56** **** 5678"
 
 
-def test_mixed_chars_with_digits():
+def test_mixed_chars_with_digits() -> None:
     """Проверка строки с буквами и цифрами
     (остаются только цифры)."""
     result = get_mask_card_number("a1b2c3d4e5f6g7h8i9j0f1g2e3y4")

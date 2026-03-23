@@ -4,7 +4,7 @@ from src.widget import mask_account_card
 
 
 @pytest.fixture
-def card_examples():
+def card_examples() -> list:
     """Фикстура с примерами номеров карт разной длины и форматов."""
     return [
         ("Visa Platinum 7000792289606361", "Visa Platinum 7000 79** **** 6361"),
@@ -15,7 +15,7 @@ def card_examples():
 
 
 @pytest.fixture
-def account_examples():
+def account_examples() -> list:
     """Фикстура с примерами номеров счетов."""
     return [
         ("Счет 73654108430135874305", "Счет **4305"),
@@ -33,7 +33,7 @@ def account_examples():
         ("Card 1234-5678-9012-3456", "Card 1234 56** **** 3456"),
     ],
 )
-def test_card_masking_parametrized(input_text, expected):
+def test_card_masking_parametrized(input_text: str, expected: str) -> None:
     """Параметризованный тест для маскировки карт."""
     result = mask_account_card(input_text)
     assert result == expected
@@ -47,20 +47,20 @@ def test_card_masking_parametrized(input_text, expected):
         ("Account 98765432109876543210", "Account **3210"),
     ],
 )
-def test_account_masking_parametrized(input_text, expected):
+def test_account_masking_parametrized(input_text: str, expected: str) -> None:
     """Параметризованный тест для маскировки счетов."""
     result = mask_account_card(input_text)
     assert result == expected
 
 
-def test_card_examples(card_examples):
+def test_card_examples(card_examples: list) -> None:
     """Тест примеров карт с использованием фикстуры."""
     for input_text, expected in card_examples:
         result = mask_account_card(input_text)
         assert result == expected
 
 
-def test_account_examples(account_examples):
+def test_account_examples(account_examples: list) -> None:
     """Тест примеров счетов с использованием фикстуры."""
     for input_text, expected in account_examples:
         result = mask_account_card(input_text)
