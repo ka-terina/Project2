@@ -1,0 +1,87 @@
+import pytest
+
+from src.processing import filter_by_state
+
+
+@pytest.fixture
+def sample_transactions():
+    return [
+        {"id": 1, "state": "EXECUTED", "amount": 100},
+        {"id": 2, "state": "PENDING", "amount": 200},
+        {"id": 3, "state": "EXECUTED", "amount": 300},
+        {"id": 4, "state": "CANCELED", "amount": 400},
+        {"id": 5, "state": "EXECUTED", "amount": 500}
+    ]
+
+@pytest.fixture
+def all_executed():
+    """Фикстура — все транзакции в состоянии EXECUTED."""
+    return [
+        {"id": 1, "state": "EXECUTED", "amount": 100},
+        {"id": 2, "state": "EXECUTED", "amount": 200}
+    ]
+
+@pytest.mark.parametrize("state,expected_count", [
+    ("EXECUTED", 3),
+    ("PENDING", 1),
+    ("CANCELED", 1),
+    ("UNKNOWN", 0)
+])
+def test_filter_by_different_states(sample_transactions, state, expected_count):
+    """Тест фильтрации по разным состояниям."""
+    result = filter_by_state(sample_transactions, state)
+    assert len(result) == expected_count
+    if expected_count > 0:
+        assert all(item["state"] == state for item in result)
+
+
+@pytest.mark.parametrize("input_list,state,expected_length", [
+    ([], "EXECUTED", 0),
+    ([], "PENDING", 0),
+    ([{"id": 1, "state": "EXECUTED"}], "EXECUTED", 1),
+    ([{"id": 1, "state": "PENDING"}], "EXECUTED", 0)
+])
+def test_edge_cases(input_list, state, expected_length):
+    """Тест краевых случаев: пустые списки, одиночные элементы."""
+    result = filter_by_state(input_list, state)
+    assert len(result) == expected_length
+
+def test_default_parameter(sample_transactions):
+    """Тест с параметром по умолчанию (state='EXECUTED')."""
+    result = filter_by_state(sample_transactions)  # без указания state
+    assert len(result) == 3
+    assert all(item["state"] == "EXECUTED" for item in result)
+
+def test_empty_list_input(empty_list):
+    """Тест на обработку пустого списка."""
+    result = filter_by_state(empty_list, "EXECUTED")
+    assert result == []
+
+def test_all_executed_case(all_executed):
+    """Тест когда все элементы уже в состоянии EXECUTED."""
+    result = filter_by_state(all_executed, "EXECUTED")
+    assert len(result) == 2
+    assert result == all_executed  # должен вернуть тот же список
+
+def test_no_matching_items(sample_transactions):
+    """Тест когда нет элементов с заданным состоянием."""
+    result = filter_by_state(sample_transactions, "COMPLETED")
+    assert result == []
+    assert len(result) == 0
+
+@pytest.mark.parametrize("data,state,expected", [
+    (
+        [{"state": "EXECUTED"}, {"state": "PENDING"}],
+        "EXECUTED",
+        [{"state": "EXECUTED"}]
+    ),
+    (
+        [{"state": "CANCELED"}, {"state": "CANCELED"}],
+        "CANCELED",
+        [{"state": "CANCELED"}, {"state": "CANCELED"}]
+    )
+])
+def test_simple_cases(data, state, expected):
+    """Простые тестовые случаи с минимальной структурой данных."""
+    result = filter_by_state(data, state)
+    assert result == expected
