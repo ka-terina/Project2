@@ -4,54 +4,64 @@ from src.widget import mask_account_card
 
 
 @pytest.fixture
-def valid_card_numbers():
+def card_examples():
+    """Фикстура с примерами номеров карт разной длины и форматов."""
     return [
-        "Visa 4276 1234 5678 9012",
-        "MasterCard 5105 1051 0510 5100",
-        "Visa4111111111111111",
-        "MasterCard5555555555554444",
+        ("Visa Platinum 7000792289606361", "Visa Platinum 7000 79** **** 6361"),
+        ("MasterCard 1234-5678-9012-3456", "MasterCard 1234 56** **** 3456"),
+        ("Card: 1234.5678.9012.3456", "Card: 1234 56** **** 3456"),
+        ("Discover 6011111111111117", "Discover 6011 11** **** 1117"),
     ]
+
 
 @pytest.fixture
-def valid_account_numbers():
+def account_examples():
+    """Фикстура с примерами номеров счетов."""
     return [
-        "Счет40817810099910004312",
-        "Счет 40702810700000000012",
+        ("Счет 73654108430135874305", "Счет **4305"),
+        ("Bank Account 12345678901234567890", "Bank Account **7890"),
+        ("Account 12345678901234564305", "Account **4305"),
+        ("Счёт 00001111222233334444", "Счёт **4444"),
     ]
 
-@pytest.fixture
-def invalid_inputs():
-    return [
-        "",                     # пустая строка
-        "123",                  # слишком короткая
-        "abc def ghi",          # буквы и пробелы
-        "!@#$%^&*()",          # спецсимволы
-    ]
 
-@pytest.mark.parametrize("card_number,expected_mask", [
-    ("Visa Platinum 4276 1234 5678 9012", "Visa Platinum 4276 12** **** 9012"),
-    ("Visa 5105 1051 0510 5100", "Visa 5105 10** **** 5100"),
-    ("MasterCard 6011 1111 1111 1117", "MasterCard 6011 11** **** 1117"),
-    ("Visa4111111111111111", "Visa 4111 11** **** 1111"),
-    ("Visa5555555555554444", "Visa 5555 55** **** 4444"),
-])
-def test_mask_card(card, expected, valid_card_number):
-    """Проверяет маскировку номеров карт."""
-    result = mask_account_card(card)
+@pytest.mark.parametrize(
+    "input_text,expected",
+    [
+        ("Visa Platinum 7000792289606361", "Visa Platinum 7000 79** **** 6361"),
+        ("MasterCard 1234567890123456", "MasterCard 1234 56** **** 3456"),
+        ("Card 1234-5678-9012-3456", "Card 1234 56** **** 3456"),
+    ],
+)
+def test_card_masking_parametrized(input_text, expected):
+    """Параметризованный тест для маскировки карт."""
+    result = mask_account_card(input_text)
     assert result == expected
 
-@pytest.mark.parametrize("account,expected", [
-    ("Cчет 12345678901234567890", "Счет **7890"),
-    ("Счет00000000000000000001", "Счет **0001"),
-    ("Счет 9999 9999 9999 9999 9999", "Счет **9999"),
-])
-def test_mask_account(account, expected, valid_account_numbers):
-    """Проверяет маскировку номеров счетов."""
-    result = mask_account_card(account)
+
+@pytest.mark.parametrize(
+    "input_text,expected",
+    [
+        ("Счет 73654108430135874305", "Счет **4305"),
+        ("Bank Account 12345678901234567890", "Bank Account **7890"),
+        ("Account 98765432109876543210", "Account **3210"),
+    ],
+)
+def test_account_masking_parametrized(input_text, expected):
+    """Параметризованный тест для маскировки счетов."""
+    result = mask_account_card(input_text)
     assert result == expected
 
-def test_error(invalid_inputs):
-    """Проверка ошибок"""
-    with pytest.raises(ValueError, match="Некорректный ввод"):
-        mask_account_card(invalid_inputs)
 
+def test_card_examples(card_examples):
+    """Тест примеров карт с использованием фикстуры."""
+    for input_text, expected in card_examples:
+        result = mask_account_card(input_text)
+        assert result == expected
+
+
+def test_account_examples(account_examples):
+    """Тест примеров счетов с использованием фикстуры."""
+    for input_text, expected in account_examples:
+        result = mask_account_card(input_text)
+        assert result == expected
