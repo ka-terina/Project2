@@ -44,10 +44,16 @@ def test_valid_masking(input_number: str, expected: str, valid_account_numbers: 
     assert result == expected
 
 
-def test_empty_string_raises_error(invalid_account_numbers: list) -> None:
+def test_string_error(invalid_account_numbers: list) -> None:
     """Пустая строка или пробелы → ошибка."""
     with pytest.raises(ValueError, match="Номер счёта не может быть пустым"):
         get_mask_account("")
+
+
+def test_empty_string_error(invalid_account_numbers: list) -> None:
+    """Пустая строка или пробелы → ошибка."""
+    with pytest.raises(ValueError, match="Номер счёта не может быть пустым"):
+        get_mask_account("  ")
 
 
 def test_non_digit_string_raises_error(invalid_account_numbers: list) -> None:
@@ -60,3 +66,28 @@ def test_too_short_number_raises_error(invalid_account_numbers: list) -> None:
     """Номера короче 4 цифр → ошибка."""
     with pytest.raises(ValueError, match="Номер счёта должен содержать не менее 4 цифр"):
         get_mask_account("12")
+
+
+def test_valid_4_digit_number() -> None:
+    """Тест: 4-значный номер возвращается без маскировки"""
+    assert get_mask_account("1234") == "1234"
+
+
+def test_6_digit_number() -> None:
+    """Тест: 6-значный номер маскируется"""
+    assert get_mask_account("123456") == "**3456"
+
+
+def test_10_digit_number() -> None:
+    """Тест: 10-значный номер маскируется"""
+    assert get_mask_account("1234567890") == "**7890"
+
+
+def test_15_digit_number() -> None:
+    """Тест: 15-значный номер маскируется"""
+    assert get_mask_account("1234567890123456789") == "**6789"
+
+
+def test_number_with_spaces() -> None:
+    """Тест: номер с пробелами корректно очищается и маскируется"""
+    assert get_mask_account("1234 5678 9012") == "**9012"

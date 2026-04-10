@@ -76,3 +76,61 @@ def test_simple_cases(data: list, state: str, expected: list) -> None:
     """Простые тестовые случаи с минимальной структурой данных."""
     result = filter_by_state(data, state)
     assert result == expected
+
+def test_invalid_lst() -> None:
+    """Проверка пустой список."""
+    result = filter_by_state([])
+    assert result == []
+
+
+def test_single_item_does_not_match() -> None:
+    """Тест с одним элементом, который не соответствует состоянию."""
+    data = [{"id": 1, "state": "PENDING"}]
+    state = "EXECUTED"
+    result = filter_by_state(data, state)
+    assert result == []
+
+def test_dict_without_state_key() -> None:
+    """Тест с словарями, у которых отсутствует ключ "state"."""
+    data = [
+        {"id": 1, "status": "EXECUTED"},  # нет ключа "state"
+        {"id": 2, "state": "EXECUTED"}
+    ]
+    with pytest.raises(KeyError):
+        filter_by_state(data)
+
+def test_single_item_does_match() -> None:
+    """Тест с одним элементом, который соответствует состоянию."""
+    data = [{"id": 1, "state": "PENDING"}]
+    state = "PENDING"
+    result = filter_by_state(data, state)
+    assert result == [{"id": 1, "state": "PENDING"}]
+
+def test_mixed_data_types_in_list():
+    """Тест со списком, содержащим разные типы данных."""
+    data = [
+        {"id": 1, "state": "EXECUTED"},
+        "not a dict",
+        42,
+        {"id": 2, "state": "EXECUTED"}
+    ]
+    with pytest.raises(KeyError):
+        filter_by_state(data)
+
+def test_nested_dictionaries():
+    """Тест со вложенными словарями."""
+    data = [
+        {"id": 1, "state": "EXECUTED", "details": {"amount": 100}},
+        {"id": 2, "state": "PENDING", "details": {"amount": 200}}
+    ]
+    expected = [{"id": 1, "state": "EXECUTED", "details": {"amount": 100}}]
+    result = filter_by_state(data)
+    assert result == expected
+
+def test_large_dataset():
+    """Тест с большим набором данных."""
+    large_data = [{"id": i, "state": "EXECUTED" if i % 2 == 0 else "PENDING"} for i in range(100)]
+    expected_count = 50  # половина элементов с state="EXECUTED"
+    result = filter_by_state(large_data)
+    assert len(result) == expected_count
+    assert all(item["state"] == "EXECUTED" for item in result)

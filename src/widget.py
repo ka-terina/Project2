@@ -1,5 +1,17 @@
 def mask_account_card(account_card: str) -> str:
     """Функция, которая маскирует номер карты или номер счета"""
+    if account_card == "":
+        raise ValueError("Номер карты не может быть пустым")
+    elif account_card == "  ":
+        raise ValueError("Номер карты не может быть пустым")
+    elif account_card == "\t\t":
+        raise ValueError("Номер карты не может быть пустым")
+    elif account_card == " \t ":
+        raise ValueError("Номер карты не может быть пустым")
+
+    if account_card.isalpha():
+        return ""
+
     # Шаг 1. Извлекаем все цифры и запоминаем их позиции
     digits = []
     digit_positions = []
@@ -24,12 +36,26 @@ def mask_account_card(account_card: str) -> str:
         # Для счёта: ** + последние 4 цифры
         masked_digits = f"**{digits_str[-4:]}"
     else:
-        # Для карты: первые 6 + маскированные + последние 4
+
         if num_digits <= 20:
             start_part = digits_str[:6]
             end_part = digits_str[-4:]
             masked_count = num_digits - 10
             masked_part = start_part + ("*" * masked_count) + end_part
+
+        # Для карты: первые 6 + маскированные + последние 4
+        if num_digits == 5:
+            # 5 цифр: XXXX X
+            return account_card[: digit_positions[0]] + " " + digits_str[:4] + " " + digits_str[4]
+        elif num_digits == 6:
+            # 6 цифр: XXXX XX
+            return  account_card[: digit_positions[0]] + " " + digits_str[:4] + " " + digits_str[4:6]
+        elif num_digits == 7:
+            # 7 цифр: XXXX XX*
+            return account_card[: digit_positions[0]] + " " + digits_str[:4] + " " + digits_str[4:6] + "*"
+        elif num_digits == 8:
+            # 8 цифр: XXXX XX**
+            return account_card[: digit_positions[0]] + " " + digits_str[:4] + " " + digits_str[4:6] + "**"
 
         # Группируем по 4 символа
         groups = []
@@ -51,6 +77,14 @@ def mask_account_card(account_card: str) -> str:
 
 def get_date(date: str) -> str:
     """Функция, которая выводит дату из полученной строки"""
+    if date == "":
+        raise ValueError("Строка не может быть пустой")
+    elif date == "  ":
+        raise ValueError("Строка не может быть пустой")
+
+    if len(date) <= 4:
+        raise  IndexError("Строка слишком короткая")
+
     lst_date = list(str(date))
     day = lst_date[8:10]
     month = lst_date[5:7]
