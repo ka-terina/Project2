@@ -77,6 +77,7 @@ def test_simple_cases(data: list, state: str, expected: list) -> None:
     result = filter_by_state(data, state)
     assert result == expected
 
+
 def test_invalid_lst() -> None:
     """Проверка пустой список."""
     result = filter_by_state([])
@@ -90,14 +91,13 @@ def test_single_item_does_not_match() -> None:
     result = filter_by_state(data, state)
     assert result == []
 
+
 def test_dict_without_state_key() -> None:
     """Тест с словарями, у которых отсутствует ключ "state"."""
-    data = [
-        {"id": 1, "status": "EXECUTED"},  # нет ключа "state"
-        {"id": 2, "state": "EXECUTED"}
-    ]
+    data = [{"id": 1, "status": "EXECUTED"}, {"id": 2, "state": "EXECUTED"}]  # нет ключа "state"
     with pytest.raises(KeyError):
         filter_by_state(data)
+
 
 def test_single_item_does_match() -> None:
     """Тест с одним элементом, который соответствует состоянию."""
@@ -106,28 +106,26 @@ def test_single_item_does_match() -> None:
     result = filter_by_state(data, state)
     assert result == [{"id": 1, "state": "PENDING"}]
 
-def test_mixed_data_types_in_list():
+
+def test_mixed_data_types_in_list() -> None:
     """Тест со списком, содержащим разные типы данных."""
-    data = [
-        {"id": 1, "state": "EXECUTED"},
-        "not a dict",
-        42,
-        {"id": 2, "state": "EXECUTED"}
-    ]
+    data = [{"id": 1, "state": "EXECUTED"}, "not a dict", 42, {"id": 2, "state": "EXECUTED"}]
     with pytest.raises(KeyError):
         filter_by_state(data)
 
-def test_nested_dictionaries():
+
+def test_nested_dictionaries() -> None:
     """Тест со вложенными словарями."""
     data = [
         {"id": 1, "state": "EXECUTED", "details": {"amount": 100}},
-        {"id": 2, "state": "PENDING", "details": {"amount": 200}}
+        {"id": 2, "state": "PENDING", "details": {"amount": 200}},
     ]
     expected = [{"id": 1, "state": "EXECUTED", "details": {"amount": 100}}]
     result = filter_by_state(data)
     assert result == expected
 
-def test_large_dataset():
+
+def test_large_dataset() -> None:
     """Тест с большим набором данных."""
     large_data = [{"id": i, "state": "EXECUTED" if i % 2 == 0 else "PENDING"} for i in range(100)]
     expected_count = 50  # половина элементов с state="EXECUTED"

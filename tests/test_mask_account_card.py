@@ -36,6 +36,7 @@ def invalid_number() -> list:
         "123",
     ]
 
+
 @pytest.fixture
 def short_card_number() -> list:
     """Короткие номера карт"""
@@ -46,10 +47,11 @@ def short_card_number() -> list:
         "12345678",
     ]
 
+
 @pytest.mark.parametrize(
     "input_number, expected",
     [
-        ("Visa12345","Visa 1234 5"),
+        ("Visa12345", "Visa 1234 5"),
         ("Visa123456", "Visa 1234 56"),
         ("Visa1234567", "Visa 1234 56*"),
         ("Visa12345678", "Visa 1234 56**"),
@@ -59,6 +61,7 @@ def test_5_8_digit_card(input_number: str, expected: str, short_card_number: lis
     """Проверка корректного маскирования для коротких номеров"""
     result = mask_account_card(input_number)
     assert result == expected
+
 
 @pytest.mark.parametrize(
     "input_text,expected",
@@ -101,6 +104,7 @@ def test_account_examples(account_examples: list) -> None:
         result = mask_account_card(input_text)
         assert result == expected
 
+
 def test_empty_string_raises_error(invalid_number: list) -> None:
     """Пустая строка или пробелы должна вызывать ошибку"""
     with pytest.raises(ValueError, match="Номер карты не может быть пустым"):
@@ -108,27 +112,31 @@ def test_empty_string_raises_error(invalid_number: list) -> None:
     with pytest.raises(ValueError, match="Номер карты не может быть пустым"):
         mask_account_card("  ")
 
+
 def test_tab_only(invalid_number: list) -> None:
     """Тест: строка из табуляций вызывает ValueError"""
     with pytest.raises(ValueError, match="Номер карты не может быть пустым"):
         mask_account_card("\t\t")
+
 
 def test_mixed_whitespace(invalid_number: list) -> None:
     """Тест: смешанные пробелы и табуляции вызывают ValueError"""
     with pytest.raises(ValueError, match="Номер карты не может быть пустым"):
         mask_account_card(" \t ")
 
+
 def test_non_digit_input() -> None:
     """Тест: ввод без цифр вызывает ошибку или возвращает пустую строку"""
     assert mask_account_card("abcd") == ""
+
 
 def test_short_card_12_digits() -> None:
     """Тест: 12‑значный номер карты маскируется"""
     result = mask_account_card("123456789012")
     assert result == "1234 56** 9012"
 
+
 def test_25_digit_account() -> None:
     """Тест: 25‑значный счёт маскируется"""
     result = mask_account_card("Счет 1234567890123456789012345")
     assert result == "Счет **2345"
-

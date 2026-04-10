@@ -5,7 +5,6 @@ def filter_by_state(new_lst: list, state: str = "EXECUTED") -> list:
     if new_lst == []:
         return []
 
-
     result = []
     for i in new_lst:
         if not isinstance(i, dict):

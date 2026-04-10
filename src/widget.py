@@ -49,7 +49,7 @@ def mask_account_card(account_card: str) -> str:
             return account_card[: digit_positions[0]] + " " + digits_str[:4] + " " + digits_str[4]
         elif num_digits == 6:
             # 6 цифр: XXXX XX
-            return  account_card[: digit_positions[0]] + " " + digits_str[:4] + " " + digits_str[4:6]
+            return account_card[: digit_positions[0]] + " " + digits_str[:4] + " " + digits_str[4:6]
         elif num_digits == 7:
             # 7 цифр: XXXX XX*
             return account_card[: digit_positions[0]] + " " + digits_str[:4] + " " + digits_str[4:6] + "*"
@@ -83,7 +83,7 @@ def get_date(date: str) -> str:
         raise ValueError("Строка не может быть пустой")
 
     if len(date) <= 4:
-        raise  IndexError("Строка слишком короткая")
+        raise IndexError("Строка слишком короткая")
 
     lst_date = list(str(date))
     day = lst_date[8:10]
