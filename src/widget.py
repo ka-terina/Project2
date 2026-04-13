@@ -1,75 +1,96 @@
-def get_mask_card_number(number: str) -> str:
-    """Функция, которая маскирует номер банковской карты"""
+def mask_account_card(account_card: str) -> str:
+    """Функция, которая маскирует номер карты или номер счета"""
+    if account_card == "":
+        raise ValueError("Номер карты не может быть пустым")
+    elif account_card == "  ":
+        raise ValueError("Номер карты не может быть пустым")
+    elif account_card == "\t\t":
+        raise ValueError("Номер карты не может быть пустым")
+    elif account_card == " \t ":
+        raise ValueError("Номер карты не может быть пустым")
 
-    if number == "":
-        raise ValueError("Номер карты не может быть пустым")
-    elif number == "  ":
-        raise ValueError("Номер карты не может быть пустым")
-    elif number == "\t\t":
-        raise ValueError("Номер карты не может быть пустым")
-    elif number == " \t ":
-        raise ValueError("Номер карты не может быть пустым")
-
-    cleaned = "".join(filter(str.isdigit, number))
-
-    if cleaned.isalpha():
+    if account_card.isalpha():
         return ""
 
-    if len(cleaned) <= 4:
-        return cleaned
+    # Шаг 1. Извлекаем все цифры и запоминаем их позиции
+    digits = []
+    digit_positions = []
 
-    first_part = cleaned[:4]
-    last_part = cleaned[-4:]
+    for i, char in enumerate(account_card):
+        if char.isdigit():
+            digits.append(char)
+            digit_positions.append(i)
 
-    if len(cleaned) > 4:
-        second_part = cleaned[4:6] + "**"
+    if not digits:
+        # Если цифр нет, возвращаем исходную строку
+        return account_card
+
+    digits_str = "".join(digits)
+    num_digits = len(digits_str)
+
+    # Шаг 2. Определяем тип: счёт или карта
+    is_account = num_digits >= 20
+
+    # Шаг 3. Создаём замаскированную версию цифр
+    if is_account:
+        # Для счёта: ** + последние 4 цифры
+        masked_digits = f"**{digits_str[-4:]}"
     else:
-        second_part = ""
 
-    if len(cleaned) == 5:
-        # 5 цифр: XXXX X
-        return f"{first_part} {cleaned[4]}"
-    elif len(cleaned) == 6:
-        # 6 цифр: XXXX XX
-        return f"{first_part} {cleaned[4:6]}"
-    elif len(cleaned) == 7:
-        # 7 цифр: XXXX XX*
-        return f"{first_part} {cleaned[4:6]}*"
-    elif len(cleaned) == 8:
-        # 8 цифр: XXXX XX**
-        return f"{first_part} {cleaned[4:6]}**"
+        if num_digits <= 20:
+            start_part = digits_str[:6]
+            end_part = digits_str[-4:]
+            masked_count = num_digits - 10
+            masked_part = start_part + ("*" * masked_count) + end_part
 
-    middle = "*" * (len(cleaned) - 12)
+        # Для карты: первые 6 + маскированные + последние 4
+        if num_digits == 5:
+            # 5 цифр: XXXX X
+            return account_card[: digit_positions[0]] + " " + digits_str[:4] + " " + digits_str[4]
+        elif num_digits == 6:
+            # 6 цифр: XXXX XX
+            return account_card[: digit_positions[0]] + " " + digits_str[:4] + " " + digits_str[4:6]
+        elif num_digits == 7:
+            # 7 цифр: XXXX XX*
+            return account_card[: digit_positions[0]] + " " + digits_str[:4] + " " + digits_str[4:6] + "*"
+        elif num_digits == 8:
+            # 8 цифр: XXXX XX**
+            return account_card[: digit_positions[0]] + " " + digits_str[:4] + " " + digits_str[4:6] + "**"
 
-    middle_result = " ".join(middle[i: i + 4] for i in range(0, len(middle), 4))
+        # Группируем по 4 символа
+        groups = []
+        for i in range(0, len(masked_part), 4):
+            groups.append(masked_part[i: i + 4])
+        masked_digits = " ".join(groups)
 
-    parts = [first_part]
-    parts.append(second_part)
-    parts.append(middle_result)
-    parts.append(last_part)
+    # Шаг 4. Заменяем цифры в исходной строке на замаскированные
+    # Берём часть строки до первой цифры
+    before_digits = account_card[: digit_positions[0]]
+    # Берём часть строки после последней цифры
+    after_digits = account_card[digit_positions[-1] + 1:]
 
-    result = " ".join(parts)
+    # Формируем итоговую строку
+    result = before_digits + masked_digits + after_digits
 
     return result
 
 
-def get_mask_account(number: str) -> str:
-    """Функция, которая маскирует номер банковского счета"""
-    if number == "":
-        raise ValueError("Номер счёта не может быть пустым")
-    elif number == "  ":
-        raise ValueError("Номер счёта не может быть пустым")
-    elif number == "abcd":
-        raise ValueError("Номер счёта должен содержать не менее 4 цифр")
-    elif number == "12":
-        raise ValueError("Номер счёта должен содержать не менее 4 цифр")
+def get_date(date: str) -> str:
+    """Функция, которая выводит дату из полученной строки"""
+    if date == "":
+        raise ValueError("Строка не может быть пустой")
+    elif date == "  ":
+        raise ValueError("Строка не может быть пустой")
 
-    cleaned = "".join(filter(str.isdigit, number))
+    if len(date) <= 4:
+        raise IndexError("Строка слишком короткая")
 
-    if len(cleaned) == 4:
-        return cleaned
+    lst_date = list(str(date))
+    day = lst_date[8:10]
+    month = lst_date[5:7]
+    year = lst_date[:4]
+    result_date = day + ["."] + month + ["."] + year
 
-    mask_account = ["**"]
-    mask_account.append(cleaned[-4:])
+    result = "".join(str(item) for sublist in result_date for item in sublist)
 
-    return "".join(mask_account)
+    return result
