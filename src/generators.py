@@ -22,6 +22,8 @@ def transaction_descriptions(transactions: list) -> Iterator[str]:
 
 def card_number_generator(start: int, stop: int) -> Iterator[str]:
     """Выдает номера банковских карт в формате ХХХХ ХХХХ ХХХХ ХХХХ"""
+    if start == 0:
+        start += 1
     for num in range(start, stop+1):
         num_str = str(num)
         num_str = "0" * (16 - len(num_str)) + num_str
