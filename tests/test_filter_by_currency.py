@@ -48,7 +48,7 @@ def not_currency() -> list:
         ),
     ],
 )
-def test_edge_cases(input_list: list, currency: str, expected: int) -> None:
+def test_edge_cases(input_list: list, currency: str, expected: list) -> None:
     """Тест краевых случаев: пустые списки, одиночные элементы."""
     result = list(filter_by_currency(input_list, currency))
     assert result == expected
