@@ -26,12 +26,12 @@ def log(filename: Optional[str] = None) -> Callable[[Callable[P, R]], Callable[P
                 return result
             except Exception as e:
                 print(f"{func.__name__} error: {type(e).__name__}. Input: {args}, {kwargs}")
+                raise
             print("End work")
 
             # Закрываем файл, если логировались в файл
             if filename:
                 output.close()
-            return result
 
         return wrapper
 

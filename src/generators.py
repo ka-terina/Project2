@@ -23,6 +23,6 @@ def card_number_generator(start: int, stop: int) -> Iterator[str]:
     for num in range(start, stop + 1):
         num_str = str(num)
         num_str = "0" * (16 - len(num_str)) + num_str
-        parts = [num_str[i: i+ 4] for i in range(0, 16, 4)]
+        parts = [num_str[i: i + 4] for i in range(0, 16, 4)]
         formatted_card = " ".join(parts)
         yield formatted_card
