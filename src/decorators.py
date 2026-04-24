@@ -7,7 +7,7 @@ R = TypeVar("R")
 
 
 def log(filename: Optional[str] = None) -> Callable[[Callable[P, R]], Callable[P, R]]:
-    """ "Декоратор для логирования выполнения функции"""
+    """Декоратор для логирования выполнения функции"""
 
     def decorator(func: Callable[P, R]) -> Callable[P, R]:
         @wraps(func)
@@ -20,15 +20,16 @@ def log(filename: Optional[str] = None) -> Callable[[Callable[P, R]], Callable[P
                 output = sys.stdout
 
             try:
-                result = func(*args, **kwargs)
-                print(f"{func.__name__} {result}")
+                result: R = func(*args, **kwargs)
+                print(f"{func.__name__} {result}", file=output)
                 return result
             except Exception as e:
-                print(f"{func.__name__} error: {type(e).__name__}. Input: {args}, {kwargs}")
-
-            # Закрываем файл, если логировались в файл
-            if filename:
-                output.close()
+                print(f"{func.__name__} error: {type(e).__name__}. Input: {args}, {kwargs}", file=output)
+                raise
+            finally:
+                # Закрываем файл, если логировались в файл
+                if filename:
+                    output.close()
 
         return wrapper
 
