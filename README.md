@@ -126,13 +126,9 @@ my_function(1, 2)
 
 Вывод если функция работает корректно
 ```
-Start work
 my_function 1.0
-End work
 ```
 Вывод если функция выдает ошибку
 ```
-Start work
 my_function error: ZeroDivisionError. Input: (2, 0), {}
-End work
 ```
