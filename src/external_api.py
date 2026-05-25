@@ -35,11 +35,3 @@ def transaction_amount(tran: dict) -> float:
         response = requests.request("GET", url, headers=headers)
 
     return float(response.json()["result"])
-
-print(transaction_amount({"operationAmount":{
-          "amount":"8221.37",
-        "currency":{
-            "name":"EUR",
-            "code":"EUR"
-        }
-        }}))
