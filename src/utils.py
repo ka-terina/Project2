@@ -24,3 +24,5 @@ def transformation(file: str) -> list:
     except Exception:
         # перехватываем другие ошибки
         return []
+
+print(transformation(r"E:\IT\pycharm\Project2\data\operations.json"))
