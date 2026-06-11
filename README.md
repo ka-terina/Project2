@@ -148,3 +148,17 @@ transformation(file)
 transaction_amount(tran)
 ```
 Где *tran* информация о транзакции
+
+### Функция для чтения excel-файлов
+Чтобы запустить функцию введите:
+```
+read_xlsx_operations(file_path)
+```
+Где *file_path* это путь до excel-файла
+
+### Функция для чтения csv-файлов
+Чтобы запустить функцию введите:
+```
+read_csv_operations(file_path)
+```
+Где *file_path* это путь до csv-файла
