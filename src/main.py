@@ -29,6 +29,7 @@ def load_transactions_from_xlsx(file_path: str) -> list:
 
 def main() -> None:
     """Основная логика программы"""
+    # выбираем формат файла
     print("Привет! Добро пожаловать в программу работы с банковскими транзакциями.")
     print("Выберите необходимый пункт меню:")
     print("1. Получить информацию о транзакциях из JSON-файла")
@@ -55,6 +56,7 @@ def main() -> None:
     else:
         print("Неверный выбор. Пожалуйста, выберите пункт от 1 до 3.")
 
+    # выбираем по какому статусу отфильтровать список и фильтруем
     print("Введите статус, по которому необходимо выполнить фильтрацию.")
     print("Доступные для фильтровки статусы: EXECUTED, CANCELED, PENDING")
 
@@ -72,48 +74,79 @@ def main() -> None:
             print("Доступные для фильтровки статусы: EXECUTED, CANCELED, PENDING")
             status = input().strip().upper()
 
-    print("Отсортировать операции по дате? Да/Нет")
-    data = input().strip().lower()
-    if data == "да":
-        print("Отсортировать по:")
-        print("1. возрастанию")
-        print("2. убыванию")
-        reverse = input().strip()
-        if reverse == "1":
-            data_reverse_file = sort_by_date(filter_file, reverse=False)
-            print("Операции отсортированы по дате в порядке по возрастанию")
-        if reverse == "2":
-            data_reverse_file = sort_by_date(filter_file, reverse=True)
-            print("Операции отсортированы по дате в порядке по убыванию")
-    elif data == "нет":
-        data_reverse_file = filter_file
-    else:
+    while True:  # выбираем сортировать по дате или нет
         print("Отсортировать операции по дате? Да/Нет")
-        data = input().strip()
+        data = input().strip().lower()
 
-    print("Выводить только рублевые транзакции? Да/Нет")
-    currency_rub = input().strip().lower()
-    if currency_rub == "да":
-        currency_file = list(filter_by_currency(data_reverse_file, currency="RUB"))
-        print("Выведены только рублевые транзакции")
-    else:
-        currency_file = data_reverse_file
+        if data == "да":
+            print("Отсортировать по:")
+            print("1. возрастанию")
+            print("2. убыванию")
 
-    print("Отфильтровать список транзакций по определенному слову в описании? Да/Нет")
-    word = input().strip()
-    result_file = process_bank_search(currency_file, word)
+            while True:  # цикл для выбора направления сортировки
+                reverse = input().strip()
+                if reverse == "1":
+                    data_reverse_file = sort_by_date(filter_file, reverse=False)
+                    print("Операции отсортированы по дате в порядке по возрастанию")
+                    break  # выходим из внутреннего цикла
+                elif reverse == "2":
+                    data_reverse_file = sort_by_date(filter_file, reverse=True)
+                    print("Операции отсортированы по дате в порядке по убыванию")
+                    break  # выходим из внутреннего цикла
+                else:
+                    print("Некорректный ввод. Введите 1 или 2.")
+            break  # выходим из внешнего цикла, т.к. "да" обработано
+
+        elif data == "нет":
+            data_reverse_file = filter_file
+            break  # выходим из внешнего цикла, т.к. "нет" обработано
+        else:
+            print("Некорректный ввод. Пожалуйста, введите 'Да' или 'Нет'.")
+            # цикл продолжается, снова задается вопрос
+
+    while True:  # определяем нужно ли фильтровать по валюте
+        print("Выводить только рублевые транзакции? Да/Нет")
+        currency_rub = input().strip().lower()
+
+        if currency_rub == "да":
+            currency_file = list(filter_by_currency(data_reverse_file, currency="RUB"))
+            print("Выведены только рублевые транзакции")
+            break  # выходим из цикла, т.к. "да" обработано
+        elif currency_rub == "нет":
+            currency_file = data_reverse_file
+            break  # выходим из цикла, т.к. "нет" обработано
+        else:
+            print("Некорректный ввод. Пожалуйста, введите 'Да' или 'Нет'.")
+            # цикл продолжается, снова задается вопрос
+
+    while True:  # нужно ли фильтровать по слову в описании
+        print("Отфильтровать список транзакций по определенному слову в описании? Да/Нет")
+        answer = input().strip().lower()
+
+        if answer == "да":
+            word = input("Введите слово для фильтрации: ").strip()
+            result_file = process_bank_search(currency_file, word)
+            break  # выходим из цикла, т.к. "да" обработано
+        elif answer == "нет":
+            result_file = currency_file
+            break  # выходим из цикла, т.к. "нет" обработано
+        else:
+            print("Некорректный ввод. Пожалуйста, введите 'Да' или 'Нет'.")
+            # цикл продолжается, снова задается вопрос
 
     print("Распечатываю итоговый список транзакций...")
 
+    # выводим количество операций в выборке
     print(f"Всего банковских операций в выборке: {len(result_file)}")
     # Если выборка оказалась пустой, программа выводит сообщение:
     if len(result_file) == 0:
         print("Не найдено ни одной транзакции, подходящей под ваши условия фильтрации")
 
+    # выводим список операций в нужном виде
     for element in result_file:
         data = get_date(element["date"])
 
-        print(data, element["description"])
-        print(f"{element['from']} -> {element['to']}")
-        print(f"Сумма: {element['amount']} {element['currency_code']}")
+        print(data, element["description"])  # дата и описание
+        print(f"{element['from']} -> {element['to']}")  # если перевод то откуда и куда
+        print(f"Сумма: {element['amount']} {element['currency_code']}")  # сумма и валюта
         print()
