@@ -5,7 +5,7 @@ def filter_by_currency(transactions: list[dict], currency: str) -> Iterator[dict
     """Фильтрует транзакции по заданной валюте"""
 
     for transaction in transactions:
-        transaction_currency = transaction.get("operationAmount", {}).get("currency", {}).get("name")
+        transaction_currency = transaction.get("currency_code", {})
         if transaction_currency == currency:
             yield transaction
 

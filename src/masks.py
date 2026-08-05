@@ -94,6 +94,3 @@ def get_mask_account(number: str) -> str:
         logger.error(f"Произошла ошибка: {f}")
 
     return "".join(mask_account)
-
-
-print(get_mask_card_number("1234"))
